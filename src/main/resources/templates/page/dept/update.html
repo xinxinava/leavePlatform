@@ -1,0 +1,100 @@
+<div class="layuimini-main">
+
+    <div class="layui-form layuimini-form">
+        <input type="hidden" name="id" id="id">
+        <input type="hidden" name="type" id="type">
+        <input type="hidden" name="parentId" id="parentId">
+        <div class="layui-form-item">
+            <label class="layui-form-label required">节点名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" id="name" lay-verify="required" placeholder="请输入节点名称" value="" class="layui-input">
+            </div>
+        </div>
+<!--        <div class="layui-form-item">-->
+<!--            <label class="layui-form-label required">类型</label>-->
+<!--            <div class="layui-input-block">-->
+<!--                <select name="type">-->
+<!--                    <option value="2">院系</option>-->
+<!--                    <option value="3">班级</option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="layui-form-item">
+            <label class="layui-form-label required">排序</label>
+            <div class="layui-input-block">
+                <input type="number" name="sort" id="sort" lay-verify="required" value="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">状态</label>
+            <div class="layui-input-block">
+                <input type="checkbox" checked="" name="status" id="status" lay-skin="switch" lay-filter="switchTest" lay-text="正常|禁用">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="updateBtn">确认修改</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'table'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            table = layui.table,
+            $ = layui.$;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        // 当前弹出层，防止ID被覆盖
+        var parentIndex = layer.index;
+
+        //监听提交
+        form.on('submit(updateBtn)', function (data) {
+            var data=data.field;
+
+            debugger
+            if(data.status=='on'){
+                data.status=1;
+            }else {
+                data.status=0;
+            }
+            //状态需要特殊处理
+            $.ajax({
+                url:"dept/updateInfo",
+                type:"post",
+                contentType:"application/json",
+                data:JSON.stringify(data),
+                success:function (res){
+                    if(res.code==200){
+                        layer.msg("修改成功");
+                        window.reload();
+                        layer.close(parentIndex);
+                    }else {
+                        layer.msg("修改失败");
+                    }
+                }
+
+            });
+
+            // var index = layer.alert(JSON.stringify(data.field), {
+            //     title: '最终的提交信息'
+            // }, function () {
+            //
+            //     // 关闭弹出层
+            //     layer.close(index);
+            //     layer.close(parentIndex);
+            //
+            // });
+
+
+            return false;
+        });
+
+    });
+</script>
